@@ -34,7 +34,7 @@ Additionally, in 2021, this dataset was quality checked and made open access by 
 Through Bird Studies Canada, Long Point Bird Observatory monitored three nest box "colonies" of Tree Swallows at Long Point, two on the "mainland" near Port Rowan (at the Port Rowan sewagelagoons and adjacent to agricultural land at mudd creek) and the third at the tip of the Point.
 
 ### The Point
-This colony was established in its present location in 1969. The nest boxes are located about 1 kmwest of the Tip of the point and are arranged 24.4m apart in a grid of numbered (north-south) rows and lettered (east-west) columns. Each box is designated by its position, so box 10G is in row 10 and column G. At the present time the rows in use are 1-19 and the letters are D-K, but many positions are unfilled and there are a total of 64 boxes.
+This colony was established in its present location in 1969. The nest boxes are located about 1 km west of the Tip of the point and are arranged 24.4m apart in a grid of numbered (north-south) rows and lettered (east-west) columns. Each box is designated by its position, so box 10G is in row 10 and column G. At the present time the rows in use are 1-19 and the letters are D-K, but many positions are unfilled and there are a total of 64 boxes.
 
 ![](TRES/thePoint.png)
 
@@ -50,16 +50,16 @@ Established in 1987, the Mud Creek site is located 3.25 km north-northeast of Se
 
 For this tutorial we will be looking at the banding dataset which adults were trapped sometime between the first young hatch and when they were 12 days old. All adult birds are banded, unless previously banded. It was also recorded if the bird had a brood patch (BP) or cloacal protuberance (CP). Plumage color was recorded as blue (BLU), Brown (BRN), or Intermediate (INT). Furthermore, plumage categories and age/sex designations were assigned and a variety of size measurements were taken: 
 
-*Plumage Categories*
-- BLU birds (ASY) – More than 90% of the upper parts iridescent blue-green
-- INT birds (AHY) – More than 50% up to 90% of upper parts iridescent blue-green (remainder dull brown or brown tinged with green)
-- BRN birds (SY) – Up to 50% of upper parts iridescent blue-green (remainder > 50% dull brown or brown tinged with green)
+##### Plumage Categories
+- BLU birds (ASY)  More than 90% of the upper parts iridescent blue-green
+- INT birds (AHY)  More than 50% up to 90% of upper parts iridescent blue-green (remainder dull brown or brown tinged with green)
+- BRN birds (SY)  Up to 50% of upper parts iridescent blue-green (remainder > 50% dull brown or brown tinged with green)
 
-*Sex Categories*
+##### Sex Categories
 - Male = M
 - Female = F
 
-*Measurements of Size and Weight*
+##### Measurements of Size and Weight
 - Wing chord length (mm) = wing_chord
 - Wing chord flat (mm) = wing_flat
 - Tail length (mm) = tail
@@ -78,7 +78,7 @@ First year females may be brownish above with hints of blue-green; adult females
 ## Importing data and packages
 
 In this tutorial, we will be working with Tree Swallow data collected by Bird Studies Canada, Long Point Bird Observatory as well as a few additional packages. Run the following code to import the required packages and pull in the dataset that we will be working with throughout this tutorial.
-```{R}
+```{R, warning = FALSE, message = FALSE}
 library(dplyr)
 library(ggplot2)
 library(tidyr)
@@ -94,9 +94,10 @@ nest <- read.csv("TRES/nest_final.csv")
 ```
 
 
-```{R}
+```{R, warning = FALSE, message = FALSE}
 # Now, we want to make sure the class of our data is correct before we move forward:
 str(banding)
+
 # lets go ahead and convert the sex and nest_box column class into factors:
 banding$sex <- as.factor(banding$sex)
 banding$nest_box <- as.factor(banding$nest_box)
@@ -124,12 +125,19 @@ nest$location <- as.factor(nest$location)
 Image from [ThoughtCo.]("https://www.thoughtco.com/peacock-facts-4690664").
 
 ***
-**Questions**
+**Question**
 
-*Why do you think this phenomenon happens?* 
-*Why are females generally more drab?* 
-*In which instance to you think females would be more ornate than males?* 
-***
+1. Why do you think this phenomenon happens?
+2. Why are females generally more drab?
+3. In which instance to you think females would be more ornate than males?
+
+Answer:
+
+1.
+
+2.
+
+3.
 
 To determine if **sexual dimorphism** exists in this tree swallow data were will get you to explore the average size measurements taken for each bird. Since birds were tracked using a band number, and birds may have been captured multiple times throughout their life, so we will observe the differences in average size measurement taken for each bird.
 
@@ -138,80 +146,83 @@ To determine if **sexual dimorphism** exists in this tree swallow data were will
 
 # will will take the mean of these measurements by band_number and gender
 
-wing_chord <- aggregate(wing_chord ~ band_number + sex, banding, mean)
+wing_chord_grouped <- aggregate(wing_chord ~ band_number + sex, banding, mean)
 
 
 # Boxplot of these trends based on sex
 
-ggplot(wing_chord, aes(factor(sex), wing_chord, fill=sex)) + 
+ggplot(wing_chord_grouped, aes(factor(sex), wing_chord, fill=sex)) + 
   geom_boxplot() +
   scale_fill_manual("", values=c("M"= "lightskyblue", "F"= "plum3")) + 
   xlab('') +
   ylab('Wing Chord') +
   ggtitle("Wing Chord vs. Sex")
-
-
-# Lets go ahead and try calculating the mean tail length by sex and band number and graph boxplots of these values:
-
-
-#### these are the answers ###
-tail <- aggregate(tail ~ band_number + sex, banding, mean)
-weight <- aggregate(weight ~ band_number + sex, banding, mean)
-
-
-ggplot(tail, aes(factor(sex), tail, fill=sex)) + 
-  geom_boxplot() +
-  scale_fill_manual("", values=c("M"= "lightskyblue", "F"= "plum3")) + 
-  xlab('') +
-  ylab('Tail') +
-  ggtitle("Tail vs. Sex")
-
-ggplot(weight, aes(factor(sex), weight, fill=sex)) + 
-  geom_boxplot() +
-  scale_fill_manual("", values=c("M"= "lightskyblue", "F"= "plum3")) + 
-  xlab('') +
-  ylab('Weight') +
-  ggtitle("Weight vs. Sex")
 ```
 
+***
+**Try coding**
 
-Now, to get a sense of how much the wind chord length, tail length, and weight differs between male and female tree swallows lets find the mean value for each.
+Lets go ahead and try calculating the mean tail length when grouped by sex and band number and graph boxplots of these values. Lets call the grouped tail values 'tail_grouped' and grouped weight values 'weight_grouped'. Hint: think look at how we calculated these values for wing_chord.
 
 ```{R}
-# can calculate the mean female and male wing flat length like this (have been taugh this way) or could subset by sex and then calculate
-
-wing_chord.avg <- aggregate(wing_chord ~ sex, wing_chord, mean)
 
 
-tail.avg <- aggregate(tail ~ sex, tail, mean)
-weight.avg <- aggregate(weight ~ sex, weight, mean)
 
-wing_chord.avg
-tail.avg
-weight.avg
+
+
+
 
 ```
 
 
-What is the average wing chord length, tail length, and weight of the male tree swallows?
+Now, to get a sense of how much the wind chord length, tail length, and weight differs between male and female tree swallows lets find the mean values of both the males and females.
 
-** fill in the blank (current answer = 117.9625	, 55.69233, 20.46923) ***
+```{R}
+# We can calculate the mean female and male wing chord length by grouping the wing chord values by sex and finding the mean like this: 
 
-What is the average wing chord length, tail length, and weight of the female tree swallows?
+aggregate(wing_chord ~ sex, wing_chord_grouped, mean)
 
-** fill in the blank (current answer = 113.5396, 54.26951	, 20.72255) ***
+# see how we are using the dataframe 'wing_chord_grouped' that we aggregated previously where we had already grouped our birds by band  number and sex?
+```
 
-** fill in the blank (current answer = 117.4681, 55.73119, 20.37966) ***
+***
+**Try coding**
 
-What is the average wing chord length, tail length, and weight of the female tree swallows?
+Try calculating the mean female and male tail length and weight values on your own.
 
-** fill in the blank (current answer = 113.1433, 54.49889, 20.64975) ***
+```{R}
 
-Do these findings suggest that there is some level of sexual dimorphism in tree swallows?
 
-What type of pressures could lead to sexual dimorphism in tree swallows?
 
-** fill in the blank (e.g. sexual selection through female choice or male-male competition?) ***
+
+
+
+
+```
+
+
+***
+**Questions**
+
+1. What is the average wing chord length, tail length, and weight of the male tree swallows?
+
+2. What is the average wing chord length, tail length, and weight of the female tree swallows?
+
+3. Do these findings suggest that there is some level of sexual dimorphism in tree swallows?
+
+4. What type of pressures could lead to sexual dimorphism in tree swallows?
+
+
+
+Answer:
+
+1.
+
+2.
+
+3.
+
+4.
 
 
 
@@ -221,48 +232,59 @@ What type of pressures could lead to sexual dimorphism in tree swallows?
 ### Trade offs: Clutch size vs. clutch number?
 
 ```{R}
-# to visualize whether there may be a trade off between clutch size and the number of clutches in a nest lets visualize these factors in a box plot
-# the 'nest' dataset contains records of the clutch numbers found in nest boxes across Long Point dating back to 1987!
+# To visualize whether there may be a trade off between clutch size and the number of clutches in a nest lets visualize these factors in a box plot. The nest dataset contains records of the clutch numbers found in nest boxes across Long Point dating back to 1987!
 
 # lets take a quick look at the dataset first to figure out what we need to plot
 head(nest)
 
-# we want to look at how clutch size (clutch_size) may vary between the first and second clutch (clutch_number)
+# we want to look at how clutch size (clutch_size) may vary between the first and second clutch (clutch_number). Lets check these out using the plotting function ggplot
 
 ggplot(nest, aes(factor(clutch_number), clutch_size)) + 
   geom_boxplot(outlier.colour="black", outlier.size=0.5, position = position_dodge(preserve = "single")) +
-  xlab('') +
+  xlab('Clutch Number') +
   ylab('Clutch Size') +
   ggtitle("Clutch Number vs. Clutch Size") +
   scale_y_continuous(breaks = seq(0, 13, by = 1)) +
   theme(plot.title = element_text(hjust = 0.5))
 
 
-#  example on how to calculate the average clutch size for clutch number 1 and 2
+# What is the mean clutch size for the first and second clutch in a nest? This is how we would calculate the average clutch size for clutch number 1 and 2. See how we are finding the mean clutch size by the clutch number, pulling these values from the nest data set?
 aggregate(clutch_size ~ clutch_number, nest, mean )
 
 ```
 
+***
+**Question**
+
 What is the average clutch size for the first and second clutches?
 
-** clutch 1 = 5.613377, clutch 2 = 4.796196	**
+Answer:
+
+
+
+
 
 It appears that second clutches are slightly smaller than first clutches! However, in order to confirm that there is a statistically significant difference between the two clutch sizes you would need to complete some sort of statistical analysis (e.g a t-test).
 
 
 ### Do larger birds have bigger clutches?
 
+Is the size and weight of the bird at maturity related to the clutch size? Lets look at wing chord length, tail length, and bird weight to investigate this. Also, lets make sure we look at male and female birds separately.
+
+
 ```{R}
-# is the size and weight of the bird at maturity related to the clutch size? Lets look at wing chord length, tail length, and bird weight to investigate this and lets separate our analysis my male and female birds
+# First, lets find the mean wing chord length when grouped by year, nest_box, sex, clutch_number, clutch_size and band number. This will help us deal with any repeated measurements taken of the same bird visiting the the same nest box multiple times in a season.
 
-# First, lets find the mean wing chord length when grouped by year, nest_box, sex, clutch_number, clutch_size and band number
+# Here is how we find the mean wing chord length, we will store these calculation in the dataframe 'banding_nest.wing_chord'
 
-# wing_chord
 banding_nest.wing_chord <- aggregate(wing_chord ~ year + sex + nest_box + clutch_number + band_number + clutch_size, banding_nest, mean)
-# tail
+
+# Here is how we find the mean tail length, we will store these calculation in the dataframe 'banding_nest.tail'
+
 banding_nest.tail <- aggregate(tail ~ year + sex + nest_box + clutch_number + band_number + clutch_size, banding_nest, mean)
 
-# weight
+# Here is how we find the mean weight, we will store these calculation in the dataframe 'banding_nest.weight'
+
 banding_nest.weight <- aggregate(weight ~ year + sex + nest_box + clutch_number + band_number + clutch_size, banding_nest, mean)
 
 # lets see if we see any patterns between the number of eggs there are per clutch (clutch_size) and the weight or size of the parent tree swallow
@@ -273,7 +295,7 @@ plot(clutch_size ~ wing_chord, banding_nest.wing_chord,
      col=sex,
      xlab="Wing Chord Length (mm)", 
      ylab="Clutch Size")
-legend("topright", legend= levels(banding_nest.wing_chord$sex),
+legend("topright", legend= levels(banding_nest.wing_chord$sex), # this adds a legend to out plots to tell us
        col= 1:2, pch = 20, cex=0.9)
 
 plot(clutch_size ~ tail, banding_nest.tail,
@@ -295,25 +317,34 @@ legend("topright", legend= levels(banding_nest.weight$sex),
        col= 1:2, pch = 20, cex=0.9)
 ```
 
+***
+**Question**
 
-What is the average clutch size for the first and second clutches?
+Do you notice any relationships between bird size and clutch size?
 
-You may notices a trend, but in order to confirm this you would need to complete some sort of statistical analysis (e.g a t-test).
+Answer:
+
+
+
+
+
 
 
 * * *
 ## Changes through time
 
-Could bird communities be changing over time as a result of climate change or other environmental shifts? Lets observe if the average clutch size over time is changing.
+Lastly, lets investigate if the average clutch size over time is changing. Could bird birth rates be changing over time as a result of climate change or other environmental shifts? 
 
 ```{R}
 # first we want to take the average clutch size that was sampled from all of the nest boxes each year
 
 nest.average <- aggregate(clutch_size ~ year, nest, mean)
 
-lm_clutch_size <- summary(lm(clutch_size ~ year, data= nest.average))
-r2_0 <- lm_clutch_size$r.squared # for R-squared labels
-rlabel_0 <- bquote(italic(R)^2 == .(format(r2_0, digits = 3)))
+# next, we will graph these values and add a linear regression with the associated R-squared value to see if there is evidence of a trend!
+
+lm_clutch_size <- summary(lm(clutch_size ~ year, data= nest.average)) # this line helps helps us calculate linear regressions
+r2_0 <- lm_clutch_size$r.squared # this line helps us make R-squared labels
+rlabel_0 <- bquote(italic(R)^2 == .(format(r2_0, digits = 3))) # this line helps us make R-squared labels
 plot(clutch_size ~ year, data=nest.average,
      main="Yearly Average Clutch Size over Time",
      pch=16,
@@ -321,11 +352,20 @@ plot(clutch_size ~ year, data=nest.average,
      ylab="Yearly Average Clutch Size",
      cex.main=1.25, 
      cex.lab=1)
-abline(lm(clutch_size ~ year, data=nest.average))
-text(2010, 6.2, rlabel_0)
+abline(lm(clutch_size ~ year, data=nest.average)) # this line adds our linear regression to the plot
+text(2010, 6.2, rlabel_0)  # this line adds our R-squared labels to the plot
 ```
 
-It may appear that the average clutch size is declining overtime however when looking at the R^2 value of this linear regression we can see that this relationship is not a strong one.
+***
+**Question**
+
+Do you notice any relationships between clutch size and year?
+
+Answer:
+
+
+
+
 
 
 * * *
