@@ -2,13 +2,7 @@
 title: "Workshop 1: Getting familiar with R and the Tree Swallow Dataset"
 author: "Elizabeth Houghton and Kirsten Palmier"
 date: "07/04/2022"
-output: 
-  #github_document: default
-  html_document:
-    toc: true
-    toc_float: true
-    number_sections: true
-  runtime: shiny_prerendered
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -47,6 +41,7 @@ Established in 1987, the Mud Creek site is located 3.25 km north-northeast of Se
 In this tutorial you will learn how to:
 
 - Learn to work with data within R studio
+  - Use simple commands in R (e.g., subsetting, changing class, aggregating data)
   - Graph a simple bar chart
   - Graph a time series 
 - Observe trends in figures
@@ -68,16 +63,16 @@ In this next section we are going to walk you through a few of the concepts you 
 
 In order to work with certain set of data in R, you must first pull them into the program.
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, warnings = FALSE, message = FALSE}
 
-# Before we can pull packages into 'R', you will first have to install them onto your computer. Run the following code to download the required packages:
+# Before we can pull packages into 'R', you will first have to install them onto your computer. Run the following code to download the required packages (without the #s, you only need to install them once):
 
-install.packages("dplyr")
-install.packages("ggplot2")
-install.packages("tidyr")
-install.packages("lubridate")
-install.packages("reshape")
-install.packages("readr")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("tidyr")
+# install.packages("lubridate")
+# install.packages("reshape")
+# install.packages("readr")
 
 # Now we can start running those packages by calling on them using the following code:
 
@@ -88,11 +83,11 @@ library(lubridate)
 library(reshape)
 library(readr)
 
-banding <- read.csv("TRES/banding_final.csv")
+banding <- read.csv("TRES/banding_final.csv") #this dataset set contains banding information
 
-nest <- read.csv("TRES/nest_final.csv")
+nest <- read.csv("TRES/nest_final.csv") #this dataset contains nest information
 
-nestling <- read.csv("TRES/nestling_final.csv")
+nestling <- read.csv("TRES/nestling_final.csv") #this dataset contains nestling information
 ```
 
 ### Data Exploration 
@@ -101,7 +96,7 @@ Let's do some data exploring! First, let's see what is in the banding dataset. T
 
 ```{r echo=TRUE}
 #look into the first few rows of the banding dataset. You can do this using the head() function
-head(banding) #where head() is the function and banding is the variable
+head(banding) #where head() is the function and banding is the dataset
 ```
 
 You can dig in deeper by using the summary() and str() functions
@@ -111,38 +106,56 @@ You can dig in deeper by using the summary() and str() functions
 summary(banding) 
 
 #check the structure of the banding dataset
-str(banding)
+str(banding) #This is important, because the variables need to match what they are being used for (i.e., to calculate mean, the variable must be numeric, not a character type)
 ```
 
-#### Subsetting and conditional subsetting elements
+### Subsetting and conditional subsetting elements
 
 * The `[` operator can be used to select multiple elements of an object: The `[` operator can be used to extract specific rows or columns from a data set where DATA[row, column]
 
 * The `$` operator can be used to extract elements by the element's name
 
+Let's try pulling the first row from the banding dataset
+
+```{r echo=TRUE}
+banding[c(1),] #notice how there is a comma after c(1)? This specifies the first row!
+```
 Let's make a mini version of our banding dataset, and call it banding2, by subsetting rows 1 through 50 and columns 2, and 5 through 13
 
 ```{r echo=TRUE}
 banding2 <- banding[c(1:50), c(2,5:13)] #where banding2 is our new dataframe containing data from rows 1:50 and columns 1 and 5:13 from the banding dataset. 
-
-#Say you want to create a new column in the banding2 dataset where you computer the mean weight of all the birds
-banding2$mean_weight <- mean(banding2$weight)
 ```
 
-What if we wanted to calculate the mean weight of the Tree Swallows as recorded in the 'banding' dataset based on their sex? We could do that by grouping how we calculate the mean by using the aggregate() function. The aggregate function can work to group data as follows:
+You can also run functions on different variables of your datasets which you can select by using `$`. You can wrap these in different functions to calculate various things. Let's calculate the mean weight from our banding2 dataset and assign it to a new variable called mean_weight.
+
+```{r echo=TRUE}
+banding2$mean_weight <- mean(banding2$weight)
+
+#Let's take a quick look at banding2 now
+head(banding2)
+```
+
+What if we wanted to calculate the mean weight of the Tree Swallows as recorded in the banding dataset based on their sex? We could do that by grouping how we calculate the mean by using the aggregate() function. The aggregate function can work to group data as follows:
 
 aggregate(y ~ a + b + c + ..., df, mean)
 
 Where y is the variable you want to take the mean of, a, b, c... are variables that you are interested in grouping these means by, df is the dataframe that you are pulling these data from, and 'mean' is instructing the command that the summary statistic you want to complete is the mean. Lets try it out!
 
 ```{r, echo = TRUE}
-# If we wanted to look at the average weight of female and male birds in the 'banding' dataset we would use aggregate() like this
-banding3 <- aggregate(weight ~ sex, banding, mean) # bandingF is where these values will be stored
+# If we wanted to look at the average weight of female and male birds in the banding dataset we would use aggregate() like this
+banding3 <- aggregate(weight ~ sex, banding, mean) # banding3 is where these values will be stored
 banding3
 ```
 
+***
+**Try coding**
+
 ```{r, echo = TRUE}
 # Try looking at the mean weight of Tree Swallows grouped by sex and year, call this new data frame 'banding4'
+
+
+
+
 ```
 
 
@@ -166,7 +179,7 @@ It is important to note that certain logical operators only work on certain clas
 # pull out female birds from your banding dataset 
 head(subset(banding, sex == "F")) #the head function limits the amount of rows displayed
 
-# Remember, if you want to store this in a df to look at later I would have to assign it to a *vector* (We are going to call it "female_birds")
+# Remember, if you want to store this in a df to look at later I would have to assign it to a vector called "female_birds"
 female_birds <- subset(banding, sex == "F")
 
 head(female_birds)
@@ -176,12 +189,33 @@ female_birds <- subset(banding, sex == "F" & weight > 20)
 
 head(female_birds)
 
-#Notice how the vector female_birds changed from 992 observations to 567 observations?
+#Notice how the vector female_birds changed from 853 observations to 495 observations?
+```
 
-# try to subset a dataframe called 'male_birds' that consists of male birds with the chord_length less than or equal to 150
+
+***
+**Try coding**
+
+```{r, echo = TRUE}
+# Try to subset a dataframe called 'male_birds' that consists of male birds with the chord_length less than or equal to 150
+
+
+
+
+
 
 ```
+
+
+***
+**Question**
+
 How many male birds have a chord_length less than or equal to 150?
+
+Answer:
+
+
+
 
 
 Having fun yet? I know I am! Let's look at the basics of a plot. This image was pulled from [here]("https://www.open.edu/openlearn/mod/oucontent/view.php?id=90853&section=3.1"). 
@@ -196,6 +230,7 @@ We will use **ggplot** to visualize the data.
 ```{r echo = TRUE, warning = FALSE}
 #First, we will create a table base on the band_or_recapture column and the year column
 tbl1 <- with(banding, table(band_or_recapture, year))  
+tbl1
 
 #Next, we can plot our table 
 ggplot(as.data.frame(tbl1), aes(x =factor(year), y = Freq, fill = band_or_recapture))+ #we've changed the format of our table to a dataframe so we can plot it. 
@@ -203,7 +238,7 @@ ggplot(as.data.frame(tbl1), aes(x =factor(year), y = Freq, fill = band_or_recapt
 ```
 
 
-Congrats! You've made your first graph. We can change elements of the graph by adding lables and titles, changing the theme and colours of our bars. 
+Congrats! You've made your first graph. We can change elements of the graph by adding labels and titles, changing the theme and colours of our bars. 
 
 
 ```{r echo = TRUE, warning = FALSE}
@@ -217,12 +252,24 @@ ggplot(as.data.frame(tbl1), aes(x =factor(year), y = Freq, fill = band_or_recapt
   theme_classic() #gets rid of grey background
 ```
 
+***
+**Question**
+
 What trends do you see? Why do you think there are more recaptured birds compared to banded birds every year?
+
+Answer:
+
+
+
+
+
+
+
 
 (If you'd like to learn more about ggplot, [this]("https://www.datanovia.com/en/blog/ggplot-legend-title-position-and-labels/") tutorial is great!)
 
 
-Next, let's take a quick look at the egg nestling dataset
+Next, let's change gears and take a quick look at the egg nestling dataset.
 
 ```{r echo =TRUE, warning = FALSE}
 head(nestling)
@@ -234,7 +281,7 @@ If we look at the structure of our new dataframe, nestling:
 str(nestling)
 ```
 
-We see the weight is a character vector. Let's change that to numeric using the as.numeric() function. Let's start with the **day_1_weight** column:
+We don't have entries for all rows of our dataframe. They will appear as **NA**s. We see the weight is a character vector. Let's change that to numeric using the as.numeric() function. Let's start with the **day_1_weight** column:
 
 ```{r echo = TRUE, warning = FALSE}
 nestling$day_1_weight <- as.numeric(nestling$day_1_weight)
@@ -296,15 +343,19 @@ ggplot(data = nestling_weight2,
   theme_classic()
 ```
 
+***
+**Question**
+
 Much better! Do you see any trends within this datasets over time? 
 What other variables could you look at within the nestling dataset?
 
-### Homework
-- do this
-- do that
-- have fun
+Answer:
 
-```{r, echo = TRUE}
+
+
+Check out this cool video on nesting Tree Swallows!
+
+```{r, echo = FALSE, message= FALSE, }
 library(vembedr)
 embed_url("https://www.youtube.com/watch?v=0FHSJnza9P8")
 ```
