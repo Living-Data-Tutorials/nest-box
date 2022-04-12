@@ -8,6 +8,15 @@ output: html_document
 ```{r setup, include=FALSE}
 # DO NOT ALTER CODE IN THIS CHUNK
 knitr::opts_chunk$set(echo = TRUE)
+
+ipak <- function(pkg){
+    new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+    if (length(new.pkg)) 
+        install.packages(new.pkg, dependencies = TRUE)
+    sapply(pkg, require, character.only = TRUE)
+}
+packages <- c("ggplot2", "ggpubr", "dplyr", "tidyr", "lubridate", "reshape", "readr", "vembedr")
+ipak(packages)
 ```
 
 * * *
@@ -29,50 +38,56 @@ The Tree Swallow (*Tachycineta bicolor*) is one of the most common birds in east
 
 Additionally, in 2021, this dataset was quality checked and made open access by Jonathan Diamond through a Data Rescue internship with the [Living Data Project]("https://www.ciee-icee.ca/data.html"), an initiative through the Canadian Institute of Ecology and Evolution that rescues legacy datasets.  
 
-![](TRES/tres.jpg){width = 100% .external}
+![](TRES/tres.jpg)
 
 Through Bird Studies Canada, Long Point Bird Observatory monitored three nest box "colonies" of Tree Swallows at Long Point, two on the "mainland" near Port Rowan (at the Port Rowan sewagelagoons and adjacent to agricultural land at mudd creek) and the third at the tip of the
 Point.
 
-![](TRES/Long_point_map.png){width = 100% .external}
+![](TRES/Long_point_map.png)
 
 ### The Point
 This colony was established in its present location in 1969. The nest boxes are located about 1 kmwest of the Tip of the point and are arranged 24.4m apart in a grid of numbered (north-south) rows and lettered (east-west) columns. Each box is designated by its position, so box 10G is in row 10 and column G. At the present time the rows in use are 1-19 and the letters are D-K, but many positions are unfilled and there are a total of 64 boxes.
 
-![](TRES/thePoint.png){width = 100% .external}
+![](TRES/thePoint.png)
 
 ### The Sewage Lagoon
 This colony was first established in 1977 and has since been expanded to a total of 77 boxes. The boxes are in two rows around the lagoon embankment, as well as across the street in a small cluster of 5 boxes.
 
-![](TRES/theSewage.png){width = 100% .external}
+![](TRES/theSewage.png)
 
 ### Mud Creek
 Established in 1987, the Mud Creek site is located 3.25 km north-northeast of Sewage Lagoon and contains 80 nest boxes. The habitat is an open, uncultivated field adjacent to a small woodlot.
 
-![](TRES/mudCreek.png){width = 100% .external}
+![](TRES/mudCreek.png)
 
 For this tutorial we will be looking at the banding dataset which adults were trapped sometime between the first young hatch and when they were 12 days old. All adult birds are banded, unless previously banded. It was also recorded if the bird had a brood patch (BP) or cloacal protuberance (CP). Plumage color was recorded as blue (BLU), Brown (BRN), or Intermediate (INT). Furthermore, plumage categories and age/sex designations were assigned and a variety of size measurements were taken: 
 
 *Plumage Categories*
+
 - BLU birds (ASY) – More than 90% of the upper parts iridescent blue-green
+
 - INT birds (AHY) – More than 50% up to 90% of upper parts iridescent blue-green (remainder dull brown or brown tinged with green)
+
 - BRN birds (SY) – Up to 50% of upper parts iridescent blue-green (remainder > 50% dull brown or brown tinged with green)
 
 *Sex Categories*
+
 - Male = M
+
 - Female = F
 
 *Measurements of Size and Weight*
+
 - Wing chord length (mm) = wing_chord
 - Wing chord flat (mm) = wing_flat
 - Tail length (mm) = tail
 - p_9 = primary feather length
 
-![](TRES/adult.png){width = 100% .external}
+![](TRES/adult.png)
 
 Adults are blue-green above with white below with blacking flight feathers. Photo courtesy of Max Nootbaar from the [Macaulay Library]("https://macaulaylibrary.org/asset/101318791?__hstc=75100365.4b6645b395fc517502f8f060b03fdb13.1649426500778.1649426500778.1649426500778.1&__hssc=75100365.2.1649426500779&__hsfp=1238073771&_gl=1*1fqca32*_ga*NzI0MDM2MjY1LjE2NDk0MjY0OTg.*_ga_QR4NVXZ8BM*MTY0OTQyNjQ5OS4xLjEuMTY0OTQyNjU3Ny41OA..#_ga=2.227763358.2003098112.1649426500-724036265.1649426498").
 
-![](TRES/immature_female.png){width = 100% .external}
+![](TRES/immature_female.png)
 
 First year females may be brownish above with hints of blue-green; adult females can be nearly blue-green as males. Photo courtesy of Matt Davis from the [Macaulay Library]("https://macaulaylibrary.org/asset/237909411?__hstc=75100365.4b6645b395fc517502f8f060b03fdb13.1649426500778.1649426500778.1649426500778.1&__hssc=75100365.3.1649426500779&__hsfp=1238073771&_gl=1*1n9uq65*_ga*NzI0MDM2MjY1LjE2NDk0MjY0OTg.*_ga_QR4NVXZ8BM*MTY0OTQyNjQ5OS4xLjEuMTY0OTQyNjg0Ni4yNg..#_ga=2.119171210.2003098112.1649426500-724036265.1649426498").
 
@@ -100,6 +115,7 @@ nest <- read.csv("TRES/nest_final.csv")
 ```{r echo = TRUE}
 # Now, we want to make sure the class of our data is correct before we move forward:
 str(banding)
+
 # lets go ahead and convert the sex and nest_box column class into factors:
 banding$sex <- as.factor(banding$sex)
 banding$nest_box <- as.factor(banding$nest_box)
@@ -120,9 +136,10 @@ nest$location <- as.factor(nest$location)
 * * *
 ### Sexual dimorphism in tree swallows
 
-**Sexual dimorphism** is defined as the phenotypic variations within different sexes of the same species (Andersson 1994). Differences can include size, weight, plumage (in birds). These differences are thought to arise through species that are part of a social mating system, in which there may be varying degrees of parental care (Darwin 1871; Wallace 1889; Anderson 1994). This phenomenon is often seen in birds, where males are the larger sex and have more ornate plummage than females. 
+**Sexual dimorphism** is defined as the phenotypic variations within different sexes of the same species ( [Andersson and Iwasa 1998]("https://pubmed.ncbi.nlm.nih.gov/21237761/")). Differences can include size, weight, plumage (in birds). These differences are thought to arise through species that are part of a social mating system, in which there may be varying degrees of parental care ( [Darwin 1871]("http://darwin-online.org.uk/converted/pdf/1889_Descent_F969.pdf"); [Wallace 1889]("https://www.cambridge.org/core/books/darwinism/8BFFDD9B0F921EAF820ED6AF062D0CF7"); [Andersson and Iwasa 1998]("https://pubmed.ncbi.nlm.nih.gov/21237761/") ). This phenomenon is often seen in birds, where males are the larger sex and have more ornate plummage than females. 
 
-[]!(TRES/ornate.png){width = 100% .external}
+<img src="TRES/ornate.png" />
+
 
 Image from [ThoughtCo.]("https://www.thoughtco.com/peacock-facts-4690664").
 
@@ -130,8 +147,11 @@ Image from [ThoughtCo.]("https://www.thoughtco.com/peacock-facts-4690664").
 **Questions**
 
 *Why do you think this phenomenon happens?* 
+
 *Why are females generally more drab?* 
+
 *In which instance to you think females would be more ornate than males? Can you think of some examples?* 
+
 ***
 
 To determine if **sexual dimorphism** exists in this tree swallow data were will get you to explore the average size measurements taken for each bird. Since birds were tracked using a band number, and birds may have been captured multiple times throughout their life, so we will observe the differences in average size measurement taken for each bird.
@@ -154,7 +174,9 @@ ggplot(wing_chord, aes(factor(sex), wing_chord, fill=sex)) +
   ggtitle("Wing Chord vs. Sex")
 ```
 
-Nice job! It looks like there is a difference between males and females in terms of wing chord measurements. Before moving forward, try measuring tail length and weight on your own. You'll see we have included what your graphs *should* look like below for both tail and weight means by sex.**Hint** Look at the example we just ran using the <aggregate> function first, then plot with <ggplot>.  
+Nice job! It looks like there is a difference between males and females in terms of wing chord measurements. Before moving forward, try measuring tail length and weight on your own. You'll see we have included what your graphs *should* look like below for both tail and weight means by sex.
+
+**Hint** Look at the example we just ran using the **aggregate** function first, then plot with **ggplot**.  
 
 ```{r echo = FALSE}
 # Lets go ahead and try calculating the mean tail length and weight by sex and band number and graph boxplots of these values:
@@ -183,6 +205,7 @@ ggplot(weight, aes(factor(sex), weight, fill=sex)) +
 
 Now, to get a sense of how much the wind chord length, tail length, and weight differs between male and female tree swallows lets find the mean value for each.
 
+
 ```{r echo = TRUE}
 # can calculate the mean female and male wing flat length like this (using aggregate()) or could subset by sex and then calculate
 
@@ -202,12 +225,24 @@ weight.avg
 
 ```
 
+Before we head to our next section, check out this ornate mating dance between males and female birds of paradise. Note the sexual dimorphism between the males and females!
+
+```{r echo = FALSE, message = FALSE}
+library(vembedr)
+embed_url("https://www.youtube.com/watch?v=nPhVOZiPokA")
+```
+
 ***
 **Questions**
 
 *What is the average wing chord length, tail length, and weight of the male tree swallows?* 
+
 *What is the average wing chord length, tail length, and weight of the female tree swallows?* 
-*Do these findings suggest that there is some level of sexual dimorphism in tree swallows? What type of pressures could lead to sexual dimorphism in tree swallows?* 
+
+*Do these findings suggest that there is some level of sexual dimorphism in tree swallows?*
+
+*What type of pressures could lead to sexual dimorphism in tree swallows?* 
+
 ***
 
 ## Aspects of Tree Swallow Life History
@@ -217,9 +252,15 @@ How and why do organisms evolve over time? How does natural selection, and other
 
 ### Trade-offs: Clutch size vs. clutch number?
 
-Trade-offs exist when "*an increase in one life history trait (improving fitness) is coupled to a decrease in another life history trait (reducing fitness), so that the fitness benefit through increasing trait 1 is balanced against a fitness cost through decreasing trait 2*" [Fabian and Flatt, 2012]("https://www.nature.com/scitable/knowledge/library/life-history-evolution-68245673/"). Traits can either be described as negative phenotypic, or genetic correlations between fitness components of individuals in a given population. Trade-offs are generally caused by limited resources, and competition for these resources, to one life history trait verses the other within an individual. For example, an organism might have a relatively short lifespan--but produce many offspring, or vice versa (think about mayflies vs elephants for example). 
+Trade-offs exist when "*an increase in one life history trait (improving fitness) is coupled to a decrease in another life history trait (reducing fitness), so that the fitness benefit through increasing trait 1 is balanced against a fitness cost through decreasing trait 2*" [Fabian and Flatt, 2012]("https://www.nature.com/scitable/knowledge/library/life-history-evolution-68245673/"). Traits can either be described as negative phenotypic, or genetic correlations between fitness components of individuals in a given population. Trade-offs are generally caused by limited resources, and competition for these resources, to one life history trait verses the other within an individual. For example, an organism might have a relatively short lifespan--but produce many offspring, or vice versa (think about mayflies vs. elephants for example). 
 
-[]!(TRES/trade_offs.png){width = 100% .external}
+<img src="TRES/trade_offs.png" />
+
+**Life history trade-offs**: 
+(A): A negative genetic (or phenotypic) correlation, i.e. a trade-off, between reproduction (e.g., # of eggs produced) and adult survival, one of the most commonly found negative relationships between life history traits. 
+(B) The so-called Y model of resource allocation trade-offs. In this example, a limited resource (e.g., a nutrient) is aquired and differentially (competitively) allocated (invtested) into physiological processes that affect survival at the expense of investment into reproductive functions (e.g., egg production, fecundity).
+(C) A useful way of thinking about resource allocation trade-offs is to imagine the life history as being a finite pie. 
+(Image from [Fabian and Flatt 2012]("https://www.nature.com/scitable/knowledge/library/life-history-evolution-68245673/"))
 
 
 ```{r echo = TRUE}
@@ -251,6 +292,7 @@ aggregate(clutch_size ~ clutch_number, nest, mean )
 *What is the average clutch size for the first and second clutches?* 
 
 You may have noticed that the second clutches are slightly smaller than the first clucthes! However, in order to confirm that there is a statistically significant difference between the two clutch sizes you would need to complete some sort of statistical analysis (e.g a t-test).
+
 ***
 
 ### Do larger birds have bigger clutches?
@@ -264,7 +306,7 @@ Is the size and weight of the bird at maturity related to the clutch size? Lets 
 # wing_chord
 banding_nest.wing_chord <- aggregate(wing_chord ~ year + sex + nest_box + clutch_number + band_number + clutch_size, banding_nest, mean)
 
-banding_nest.wing_chord
+head(banding_nest.wing_chord)
 
 # lets see if we see any patterns between the number of eggs there are per clutch (clutch_size) and the weight or size of the parent tree swallow
 
@@ -314,8 +356,8 @@ What is the average clutch size for the first and second clutches?
 
 You may notices a trend, but in order to confirm this you would need to complete some sort of statistical analysis (e.g a t-test).
 
-
 * * *
+
 ## Changes through time
 
 Could bird communities be changing over time as a result of climate change or other environmental shifts? Lets observe if the average clutch size over time is changing.
@@ -343,15 +385,10 @@ text(2010, 6.2, rlabel_0)
 
 It may appear that the average clutch size is declining overtime however when looking at the R^2 value of this linear regression we can see that this relationship is not a strong one.
 
-
 * * *
+
 ## Take-homes
 
 After going through these data you have now had the opportunity to learn a bit about tree swallows, and more specifically look at a 'community' of tree swallows found in Long Point, ON. This population appeared to show signs of sexual dimorphism, where the male swallows had longer wing chords and tails and were heavier. As well, we noticed that there appeared t be a trade off between clutch size and the number of clutched in a nest. An important thing to not is that these relationships were speculative and statistical analyses will be required to support these findings in this population.
 
 Lastly, these data did not show trends of larger birds having more eggs and we observed no conclusive temporal trends of changes in birth rates over time. It is not uncommon that data is collected with certain hypotheses in mind and trend or relationships are ultimately not found to support these hypotheses!
-
-
-
-
-
