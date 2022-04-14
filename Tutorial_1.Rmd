@@ -18,10 +18,11 @@ ipak <- function(pkg){
     sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("dplyr", "ggplot2", "tidyr", "lubridate", "reshape", "readr")
+packages <- c("dplyr", "ggplot2", "tidyr", "lubridate", "reshape", "readr", "vembedr")
 ipak(packages)
 ```
 
+* * *
 ## Tree Swallow Nest Productivity 
 
 This is a tutorial to get you familiar with R and explore ecological concepts through a Tree Swallow nest productivity dataset. Before we jump into the weeds, let's get to know our dataset!  
@@ -37,6 +38,12 @@ Additionally, in 2021, this dataset was quality checked and made open access by 
 </center>
 
 Through Bird Studies Canada, Long Point Bird Observatory monitored three nest box "colonies" of Tree Swallows at Long Point, two on the "mainland" near Port Rowan (at the Port Rowan sewage lagoons and adjacent to agricultural land at mudd creek) and the third at the tip of the Point.
+
+<center>
+
+![](TRES/Long_point_map.png)
+
+</center>
 
 ### The Point
 This colony was established in its present location in 1969. The nest boxes are located about 1 km west of the Tip of the point and are arranged 24.4m apart in a grid of numbered (north-south) rows and lettered (east-west) columns. Each box is designated by its position, so box 10G is in row 10 and column G. At the present time the rows in use are 1-19 and the letters are D-K, but many positions are unfilled and there are a total of 64 boxes.
@@ -71,7 +78,7 @@ Established in 1987, the Mud Creek site is located 3.25 km north-northeast of Se
 </center>
 <br>
 
-
+* * *
 ## Tutorial Learning Objectives
 
 In this tutorial you will learn how to:
@@ -82,6 +89,7 @@ In this tutorial you will learn how to:
   - Graph a time series 
 - Observe trends in figures
 
+* * *
 ## Installing R
 
 To navigate and complete the following tutorials you will be required to install `R` and we encourage you to install R Studio.
@@ -90,6 +98,7 @@ To navigate and complete the following tutorials you will be required to install
 
 The final piece of software that is required for completing the practicals is `rmarkdown`. R Markdown documents weave together narrative text and code to produce formatted, fully reproducible outputs. If you are unfamiliar with R Markdown, a short tutorial is available from https://rmarkdown.rstudio.com/articles_intro.html.
 
+* * *
 ## Overview of R concepts
 
 In this next section we are going to walk you through a few of the concepts you need to understand in order to work with data in `R`. 
@@ -184,7 +193,7 @@ banding3
 ```
 
 
-* * *
+***
 **Try coding**
 
 ```{r, echo = TRUE}
@@ -193,8 +202,6 @@ banding3
 
 
 ```
-
-
 
 Now that you have a good handle on basic subsetting, let's dig a little deeper and use logical operators to further subset your data. 
 
@@ -227,7 +234,7 @@ head(female_birds)
 ```
 
 
-* * *
+***
 **Try coding**
 
 ```{r, echo = TRUE}
@@ -235,17 +242,12 @@ head(female_birds)
 ```
 
 
-* * *
+***
 **Question**
 
-How many male birds have a chord_length less than or equal to 150?
+*How many male birds have a chord_length less than or equal to 150?*
 
-Answer:
-
-
-
-
-
+***
 
 <br>
 Having fun yet? I know I am! Let's look at the basics of a plot. This image was pulled from [here]("https://www.open.edu/openlearn/mod/oucontent/view.php?id=90853&section=3.1"). 
@@ -282,19 +284,14 @@ ggplot(as.data.frame(tbl1), aes(x =factor(year), y = Freq, fill = band_or_recapt
   theme_classic() #gets rid of grey background
 ```
 
-
-* * *
+***
 **Question**
 
-What trends do you see? 
-Why do you think there are more recaptured birds compared to banded birds every year?
+*What trends do you see?*
 
-Answer:
+*Why do you think there are more recaptured birds compared to banded birds every year?*
 
-
-
-
-
+***
 
 <br>
 (If you'd like to learn more about ggplot, [this]("https://www.datanovia.com/en/blog/ggplot-legend-title-position-and-labels/") tutorial is great!)
@@ -374,19 +371,17 @@ ggplot(data = nestling_weight2,
   theme_classic()
 ```
 
-
-* * *
-**Question**
-
-Much better! Do you see any trends within this datasets over time? 
-What other variables could you look at within the nestling dataset?
-
-Answer:
+Much better!
 
 
+***
+**Questions**
 
+*Do you see any trends within this datasets over time?*
 
+*What other variables could you look at within the nestling dataset?*
 
+***
 
 <br>
 Check out this cool video on nesting Tree Swallows!
