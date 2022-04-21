@@ -1,7 +1,6 @@
 ---
 title: "Sexual Dimorphism and Sexual Selection Tutorial"
 author: "Elizabeth Houghton and Kirsten Palmier"
-date: "06/04/2022"
 output: html_document
 ---
 
@@ -131,7 +130,6 @@ library(lubridate)
 library(reshape)
 library(readr)
 library(ggpubr)
-
 # Here we are pulling the actual datasets into R
 banding <- read.csv("TRES/banding_final.csv")
 banding_nest <- read.csv("TRES/banding_nest_final.csv")
@@ -142,18 +140,15 @@ nest <- read.csv("TRES/nest_final.csv")
 ```{r echo = TRUE}
 # Now, we want to make sure the class of our data is correct before we move forward:
 str(banding)
-
 # lets go ahead and convert the sex and nest_box column class into factors:
 banding$sex <- as.factor(banding$sex)
 banding$nest_box <- as.factor(banding$nest_box)
 str(banding_nest)
-
 # fix class
 banding_nest$sex <- as.factor(banding_nest$sex)
 banding_nest$nest_box <- as.factor(banding_nest$nest_box)
 banding_nest$location <- as.factor(banding_nest$location)
 str(banding_nest)
-
 # fix class
 nest$nest_code <- as.factor(nest$nest_code)
 nest$location <- as.factor(nest$location)
